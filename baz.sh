@@ -1,23 +1,18 @@
 #!/bin/bash
 
-_days=`echo {17..50}`
-days=
-for d in $_days
-do
-  if [ $d -eq 33 ] || [ 1 -ne 1 ]; then
-    :
-  else
-    days="${days} ${d}"
-  fi
-done
-
+# echo $1
+_days=`ls images | sort`
+nr=`echo "$_days" | cat | sed -n "/${1}/="`
+# echo $nr
+days=`echo "$_days" | tail -n "+${nr}"`
 
 for d in $days
 do
+  df=${d#0}
   echo
-  echo "# ${d}日目"
+  echo "# ${df}日目"
 
-  for i in `find images/0$d -type f | sort | sed -n '${p;x;p;q;}; H'`
+  for i in `find images/$d -type f | sort | sed -n '${p;x;p;q;}; H'`
   do
     if echo $i | grep bb >/dev/null 2>&1; then
       di=`basename $i .jpg`
@@ -25,7 +20,7 @@ do
       di=${di#bb_}
       di=${di%???}
       date -j -v+9H -f '%Y%m%d_%H%M%S' "$di" '+%Y/%m/%d %R ごろ'
-      echo "![ソラマメの様子${d}日目]($i)"
+      echo "![ソラマメの様子${df}日目]($i)"
     else
       echo "<!-- ![]($i) -->"
     fi
